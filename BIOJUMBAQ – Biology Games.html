@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BIOJUMBAQ</title>
+<style>
+:root{--ink:#f3f1ea;--mut:#a9b4b0;--teal:#5fd4de;--g:#18a050;--y:#d9770a;--gr:#3f4552;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#f3f1ea}}
+:root[data-theme="dark"]{--ink:#f3f1ea}
+html{height:100%}*{box-sizing:border-box}
+body{margin:0;min-height:100%;background:linear-gradient(170deg,#0f1f24,#251f3f) fixed;color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif}
+main{max-width:480px;margin:0 auto;padding:16px 14px 36px}
+h1{font-size:clamp(40px,14vw,64px);margin:30px 0;text-align:center;color:var(--teal);font-weight:900;letter-spacing:-1px}
+button{font:inherit;color:inherit;cursor:pointer}button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.card{display:block;width:100%;text-align:left;border:2px solid rgba(255,255,255,.18);border-radius:28px;padding:18px 22px;margin-bottom:14px}
+.card b{display:block;font-size:24px;margin-bottom:4px}.card span{color:#f1e3a6;font-size:15px}
+.c1{background:linear-gradient(135deg,#2f7d6d,#216a5c)}.c2{background:linear-gradient(135deg,#3f6a8a,#21485f)}.c4{background:linear-gradient(135deg,#8a6a2a,#6b4a14)}.c3{background:linear-gradient(135deg,#7a3e6b,#8c1b4e)}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:12px}.top button{background:none;border:0;font-size:26px}.top h2{margin:0;font-size:22px;flex:1}
+.rules{font-size:14px;color:var(--mut);line-height:1.4;margin:0 0 14px}
+.sm{padding:12px 20px;border-radius:22px;border:2px solid rgba(255,255,255,.2);background:rgba(255,255,255,.07);font-weight:700}
+.pri{background:#5b5be8;border-color:#5b5be8}
+.row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.msg{text-align:center;min-height:24px;font-weight:700;margin:6px 0}
+/* wordle */
+.wg{display:grid;gap:6px;width:min(300px,100%);margin:6px auto 14px}.wr{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.t{aspect-ratio:1;border-radius:10px;border:2px solid #333b4a;display:grid;place-items:center;font-size:28px;font-weight:800}
+.t.g{background:var(--g);border-color:var(--g)}.t.y{background:var(--y);border-color:var(--y)}.t.x{background:var(--gr);border-color:var(--gr)}
+.kr{display:flex;gap:4px;justify-content:center;margin-bottom:6px}
+.k{flex:1;max-width:36px;height:48px;border-radius:8px;border:0;background:#2a2f3b;font-weight:700;padding:0}.k.w{max-width:56px;font-size:12px}
+.k.g{background:var(--g)}.k.y{background:var(--y)}.k.x{background:#171a21;color:#6b7280}
+/* connections */
+.grp{border-radius:14px;padding:12px;text-align:center;color:#101319;margin-bottom:8px}.grp b{display:block}
+.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.cw{min-height:64px;border-radius:12px;border:0;background:#e9e4d6;color:#101319;font-weight:800;font-size:12px;padding:4px;word-break:break-word}
+.cw.s{background:#2b2f3a;color:#fff}
+.dots{text-align:center;margin:10px 0}.dots i{display:inline-block;width:12px;height:12px;border-radius:50%;background:#e5e7eb;margin:0 3px}.dots i.u{background:#444}
+/* ladder */
+.ld{display:grid;gap:8px;width:min(280px,100%);margin:10px auto}.lr{display:grid;gap:6px}
+.lt{aspect-ratio:1;border-radius:10px;display:grid;place-items:center;font-size:26px;font-weight:800;background:#2b2f3a;color:#7c8494}
+.lr.f .lt{background:linear-gradient(#b3195c,#8c1049);color:#fff}
+.in{width:100%;padding:14px;border-radius:14px;border:2px solid #333b4a;background:#222640;color:#fff;font-size:20px;text-transform:uppercase;text-align:center}
+.bar{height:8px;background:rgba(255,255,255,.12);border-radius:8px;overflow:hidden;margin-bottom:20px}.bar i{display:block;height:100%;background:var(--teal)}
+.qt{font-size:22px;line-height:1.35;margin:0 0 18px}.opt{display:block;width:100%;text-align:left;padding:15px 18px;margin-bottom:10px;border-radius:16px;border:2px solid rgba(255,255,255,.15);background:rgba(255,255,255,.07);font-size:18px}.opt.ok{background:var(--g);border-color:var(--g)}.opt.bad{background:#c0392b;border-color:#c0392b}
+.score{text-align:center;font-size:56px;font-weight:900;color:var(--teal);margin:26px 0 4px}table{width:100%;border-collapse:collapse}td{padding:12px 6px;border-bottom:1px solid rgba(255,255,255,.12)}td:last-child{text-align:right;font-weight:700}
+</style></head><body><main id="app"></main>
+<script>
+var app=document.getElementById("app"),onKey=null;
+document.addEventListener("keydown",function(e){if(onKey&&!e.ctrlKey&&!e.metaKey)onKey(e)});
+function top(t){return '<div class="top"><button id="bk" aria-label="Back">←</button><h2>'+t+'</h2></div>'}
+function back(){onKey=null;document.getElementById("bk").onclick=home}
+var ST={};try{ST=JSON.parse(localStorage.getItem("biost")||"{}")}catch(e){}
+function rec(g,w){var o=ST[g]||{p:0,w:0};o.p++;if(w)o.w++;ST[g]=o;try{localStorage.setItem("biost",JSON.stringify(ST))}catch(e){}}
+function home(){onKey=null;
+ app.innerHTML='<h1>BIOJUMBAQ</h1><button class="card c1" data-g="w"><b>Word Guess</b><span>Find today’s biology word 🏆</span></button><button class="card c2" data-g="c"><b>Four Groups</b><span>Sort 16 terms into 4 groups 🍀</span></button><button class="card c3" data-g="l"><b>Word Bridge</b><span>Change one letter at a time 💪</span></button><button class="card c4" data-g="q"><b>Bio Quiz</b><span>30 questions, 4 levels 🧬</span></button><div class="row"><button class="sm" id="ru">Rules</button><button class="sm" id="re">View all game results</button></div>';
+ app.querySelectorAll(".card").forEach(function(b){b.onclick=function(){({w:wordle,c:conn,l:ladder,q:quizMenu})[b.dataset.g]()}});
+ document.getElementById("ru").onclick=rules;document.getElementById("re").onclick=results}
+function rules(){app.innerHTML=top("Rules")+'<p class="rules"><b>Word Guess:</b> Guess the 5-letter biology word in 6 tries. Green = right letter, right place. Yellow = letter is in the word, wrong place. Gray = letter is not in the word. A clue is shown above the grid.</p><p class="rules"><b>Four Groups:</b> Pick 4 terms that share something in common and press Submit. Find all 4 groups before you make 4 mistakes. “One away!” means 3 of your 4 terms are right.</p><p class="rules"><b>Word Bridge:</b> Turn the top word into the bottom word. Change exactly one letter each step and every step must be a real word. Use Hint if you are stuck.</p><p class="rules"><b>Bio Quiz:</b> Pick one answer for each question. The right answer turns green. Choose a level or play all 30 questions.</p>';back()}
+function results(){var h=top("All game results")+'<table>';["Word Guess","Four Groups","Word Bridge"].forEach(function(g){var o=ST[g]||{p:0,w:0};h+='<tr><td>'+g+'</td><td>'+o.w+' won / '+o.p+' played</td></tr>'});
+ QZ.forEach(function(l,i){h+='<tr><td>Quiz: '+l.n+'</td><td>'+(ST["q"+i]!=null?"best "+ST["q"+i]+"/"+l.q.length:"–")+'</td></tr>'});
+ h+='<tr><td>Quiz: all 30</td><td>'+(ST.qa!=null?"best "+ST.qa+"/30":"–")+'</td></tr></table>';app.innerHTML=h;back()}
+
+/* ---------- WORDLE ---------- */
+var WW=[["HEART","The organ that pumps blood around the body"],["BRAIN","The organ that helps us think"],["LUNGS","Organs that exchange gases when we breathe"],["ROOTS","The part of a plant that absorbs water from the soil"],["CELLS","The basic units of life"],["PLANT","A rose is one"],["NERVE","Carries signals to and from the brain"],["VIRUS","A tiny germ that can cause infections"]];
+function wordle(){
+ var pk=WW[Math.floor(Math.random()*WW.length)],ans=pk[0],rows=[],cur="",over=false,kb={},msg="";
+ function score(g){var r=[],c={},i;for(i=0;i<5;i++){if(g[i]==ans[i])r[i]="g";else{r[i]="x";c[ans[i]]=(c[ans[i]]||0)+1}}
+  for(i=0;i<5;i++)if(r[i]!="g"&&c[g[i]]>0){r[i]="y";c[g[i]]--}return r}
+ function draw(){var h=top("Word Guess")+'<p class="rules">Clue: <b>'+pk[1]+'</b></p><div class="wg">';
+  for(var r=0;r<6;r++){h+='<div class="wr">';for(var i=0;i<5;i++){var cl="",l="";
+   if(r<rows.length){cl=rows[r].s[i];l=rows[r].w[i]}else if(r==rows.length){l=cur[i]||""}
+   h+='<div class="t '+cl+'">'+l+'</div>'}h+='</div>'}
+  h+='</div><div class="msg">'+msg+'</div>';
+  ["QWERTYUIOP","ASDFGHJKL","!ZXCVBNM<"].forEach(function(s){h+='<div class="kr">';s.split("").forEach(function(c){
+   var lab=c=="!"?"ENTER":c=="<"?"⌫":c,w=c=="!"||c=="<"?" w":"";h+='<button class="k'+w+' '+(kb[c]||"")+'" data-k="'+c+'">'+lab+'</button>'});h+='</div>'});
+  if(over)h+='<div class="row"><button class="sm pri" id="nw">New word</button></div>';
+  app.innerHTML=h;back();
+  app.querySelectorAll(".k").forEach(function(b){b.onclick=function(){press(b.dataset.k)}});
+  var n=document.getElementById("nw");if(n)n.onclick=wordle}
+ function press(k){if(over)return;msg="";
+  if(k=="<"){cur=cur.slice(0,-1)}
+  else if(k=="!"){if(cur.length<5){msg="Not enough letters"}else{var s=score(cur);rows.push({w:cur,s:s});
+    for(var i=0;i<5;i++){var o=kb[cur[i]],v=s[i];if(o=="g"||(o=="y"&&v=="x"))continue;kb[cur[i]]=v}
+    if(cur==ans){over=true;msg="🎉 Correct! You got it in "+rows.length}
+    else if(rows.length==6){over=true;msg="The word was "+ans}
+    if(over)rec("Word Guess",rows[rows.length-1].w==ans);cur=""}}
+  else if(cur.length<5)cur+=k;
+  draw()}
+ onKey=function(e){var k=e.key;if(k=="Enter")press("!");else if(k=="Backspace")press("<");else if(/^[a-zA-Z]$/.test(k))press(k.toUpperCase())};
+ draw()}
+
+/* ---------- CONNECTIONS ---------- */
+var CP=[[
+ ["Organs","#f9df6d",["HEART","LUNG","LIVER","KIDNEY"]],
+ ["Plant parts","#a0c35a",["ROOT","STEM","LEAF","PETAL"]],
+ ["Mammals","#b0c4ef",["DOLPHIN","BAT","WHALE","COW"]],
+ ["Cell parts","#ba81c5",["NUCLEUS","RIBOSOME","VACUOLE","MEMBRANE"]]],[
+ ["Vertebrates","#f9df6d",["SHARK","FROG","EAGLE","SNAKE"]],
+ ["Invertebrates","#a0c35a",["SPIDER","EARTHWORM","BUTTERFLY","BEE"]],
+ ["Diet types","#b0c4ef",["HERBIVORE","CARNIVORE","OMNIVORE","DECOMPOSER"]],
+ ["Found in blood","#ba81c5",["PLASMA","PLATELET","HEMOGLOBIN","ANTIBODY"]]]];
+var cpi=0;
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function conn(){
+ var P=CP[cpi%CP.length],left=shuf([].concat.apply([],P.map(function(g){return g[2]}))),sel=[],done=[],miss=0,msg="";
+ function draw(){var over=miss>=4,win=done.length==4;
+  var h=top("Four Groups")+'<p class="rules">Find four groups of four terms that share something in common. Pick 4 terms and press Submit. 4 mistakes and the game ends.</p>';
+  done.forEach(function(g){h+='<div class="grp" style="background:'+g[1]+'"><b>'+g[0]+'</b>'+g[2].join(", ")+'</div>'});
+  h+='<div class="cg">';left.forEach(function(w){h+='<button class="cw'+(sel.indexOf(w)>-1?" s":"")+'" data-w="'+w+'"'+(over||win?" disabled":"")+'>'+w+'</button>'});
+  h+='</div><div class="msg">'+msg+'</div><div class="dots">Mistakes left: ';for(var i=0;i<4;i++)h+='<i class="'+(i<miss?"u":"")+'"></i>';h+='</div>';
+  if(win||over)h+='<div class="row"><button class="sm pri" id="nx">Next puzzle</button></div>';
+  else h+='<div class="row"><button class="sm" id="sh">Shuffle</button><button class="sm" id="ds">Deselect</button><button class="sm pri" id="sb">Submit</button></div>';
+  app.innerHTML=h;back();
+  app.querySelectorAll(".cw").forEach(function(b){b.onclick=function(){var w=b.dataset.w,i=sel.indexOf(w);if(i>-1)sel.splice(i,1);else if(sel.length<4)sel.push(w);msg="";draw()}});
+  var q=function(id,f){var e=document.getElementById(id);if(e)e.onclick=f};
+  q("sh",function(){left=shuf(left);draw()});q("ds",function(){sel=[];draw()});q("nx",function(){cpi++;conn()});
+  q("sb",function(){if(sel.length<4){msg="Select 4 terms";draw();return}
+   var hit=P.filter(function(g){return done.indexOf(g)<0&&sel.every(function(w){return g[2].indexOf(w)>-1})})[0];
+   if(hit){done.push(hit);left=left.filter(function(w){return hit[2].indexOf(w)<0});sel=[];msg=done.length==4?"🎉 All groups found!":"Correct!";if(done.length==4)rec("Four Groups",1)}
+   else{var near=P.some(function(g){return sel.filter(function(w){return g[2].indexOf(w)>-1}).length==3});miss++;msg=near?"One away!":"Not a group";sel=[];
+    if(miss>=4){rec("Four Groups",0);msg="Game over. Here are the groups:";P.forEach(function(g){if(done.indexOf(g)<0)done.push(g)});left=[]}}
+   draw()})}
+ draw()}
+
+/* ---------- WORD BRIDGE ---------- */
+var LD=[
+ {w:["SEED","FEED","FEEL","FELL","CELL"],c:"Start: a plant’s beginning. End: the basic unit of life."},
+ {w:["LEAF","LEAN","MEAN","MEAT","HEAT"],c:"Start: part of a plant. End: warmth from the sun."},
+ {w:["CELL","CALL","BALL","BALE","BARE","BARK"],c:"Start: unit of life. End: outer covering of a tree."}];
+var ldi=0;
+function ladder(){
+ var L=LD[ldi%LD.length],W=L.w,n=W.length,step=1,hints=0,msg="";
+ function draw(){var done=step>=n-1,h=top("Word Bridge")+'<p class="rules">Change exactly one letter in each step to turn the top word into the bottom word. Every step must be a real word. Clue: '+L.c+'</p><div class="ld">';
+  for(var r=0;r<n;r++){var show=r==0||r==n-1||r<step,hint=r==step&&hints>0;
+   h+='<div class="lr'+(show?" f":"")+'" style="grid-template-columns:repeat('+W[0].length+',1fr)">';
+   for(var i=0;i<W[r].length;i++)h+='<div class="lt">'+(show?W[r][i]:(hint&&i<hints?W[r][i]:""))+'</div>';h+='</div>'}
+  h+='</div><div class="msg">'+msg+'</div>';
+  if(done)h+='<div class="row"><button class="sm pri" id="nx">Next bridge</button></div>';
+  else h+='<input class="in" id="in" maxlength="'+W[0].length+'" autocomplete="off" autocapitalize="characters" placeholder="Type step '+step+'"><div class="row"><button class="sm" id="hp">Hint</button><button class="sm pri" id="ok">Check</button></div>';
+  app.innerHTML=h;back();
+  var q=function(id,f){var e=document.getElementById(id);if(e)e.onclick=f};
+  q("nx",function(){ldi++;ladder()});
+  q("hp",function(){hints=Math.min(hints+1,W[0].length-1);msg="Hint used: "+hints;draw()});
+  var chk=function(){var v=document.getElementById("in").value.toUpperCase().trim(),p=W[step-1],d=0;
+   if(v.length!=p.length){msg="Use "+p.length+" letters";draw();return}
+   for(var i=0;i<p.length;i++)if(v[i]!=p[i])d++;
+   if(v==W[step]){step++;hints=0;if(step>=n-1)rec("Word Bridge",1);msg=step>=n-1?"🎉 Bridge complete!":"Good! Next step"}
+   else msg=d!=1?"Change exactly one letter from "+p:"Not the word we need — try another";
+   draw()};
+  q("ok",chk);var inp=document.getElementById("in");if(inp){inp.onkeydown=function(e){if(e.key=="Enter")chk()};inp.focus()}}
+ draw()}
+
+/* ---------- QUIZ ---------- */
+var QZ=[
+{n:"Level 1",q:[["Which organ pumps blood around the body?","Brain","Heart","Lung","Stomach",1],["How many legs does a human usually have?","2","4","6","8",0],["Which organ helps us see?","Ear","Nose","Eye","Skin",2],["What do humans need to breathe?","Oxygen","Sugar","Salt","Helium",0],["Which animal says “moo”?","Dog","Cow","Cat","Horse",1],["Which of these is a plant?","Rose","Tiger","Fish","Eagle",0]]},
+{n:"Level 2",q:[["What is the basic unit of life?","Organ","Cell","Bone","Muscle",1],["Which organ helps us think?","Heart","Brain","Kidney","Lung",1],["Which part of a plant absorbs water from the soil?","Flower","Leaf","Root","Fruit",2],["Which animal is a mammal?","Shark","Frog","Dolphin","Snake",2],["What do bees collect from flowers?","Milk","Nectar","Blood","Salt",1],["Which of these is NOT alive?","Tree","Mushroom","Rock","Bacterium",2]]},
+{n:"Level 3",q:[["What is DNA responsible for?","Carrying genetic information","Digesting food","Pumping blood","Producing sound",0],["Which cells help fight infections?","Red blood cells","White blood cells","Skin cells","Bone cells",1],["What is the green pigment in plants called?","Glucose","Chlorophyll","Protein","Calcium",1],["Which organ filters waste from the blood?","Heart","Kidney","Brain","Stomach",1],["What do plants need for photosynthesis?","Sunlight","Plastic","Meat","Salt",0],["Which animals eat mainly plants?","Carnivores","Herbivores","Predators","Parasites",1]]},
+{n:"Level 4",q:[["How many chromosomes are normally found in a human body cell?","23","46","44","92",1],["What gas do plants release during photosynthesis?","Oxygen","Nitrogen","Carbon dioxide","Hydrogen",0],["Which system carries blood around the body?","Nervous system","Digestive system","Circulatory system","Respiratory system",2],["Which blood cells carry oxygen?","White blood cells","Red blood cells","Platelets","Nerve cells",1],["What is the main function of the lungs?","Digest food","Pump blood","Exchange gases","Control movement",2],["Which of these is a vertebrate?","Spider","Earthworm","Butterfly","Fish",3],["Which organelle is known as the “powerhouse” of the cell?","Nucleus","Ribosome","Mitochondrion","Cell wall",2],["What is the main function of red blood cells?","Fight bacteria","Carry oxygen","Produce hormones","Digest food",1],["Which process allows plants to make glucose using sunlight?","Respiration","Digestion","Photosynthesis","Fermentation",2],["What is the main function of the nucleus?","Store genetic information and control cell activities","Produce oxygen","Digest proteins","Pump blood",0],["Which molecule is the main source of quick energy for cells?","Glucose","DNA","Calcium","Water",0],["What happens to a person’s heart rate during most forms of exercise?","It decreases","It stays exactly the same","It increases","It stops briefly",2]]}];
+function quizMenu(){onKey=null;var h=top("Bio Quiz");QZ.forEach(function(l,i){h+='<button class="card c'+(i+1)+'" data-i="'+i+'"><b>'+l.n+'</b><span>'+l.q.length+' questions'+(ST["q"+i]!=null?' · best '+ST["q"+i]:'')+'</span></button>'});
+ h+='<div class="row"><button class="sm" id="qa">All 30 questions</button></div>';app.innerHTML=h;back();
+ app.querySelectorAll(".card").forEach(function(b){b.onclick=function(){quiz(+b.dataset.i)}});document.getElementById("qa").onclick=function(){quiz(-1)}}
+function quiz(i){var qs=i<0?[].concat.apply([],QZ.map(function(l){return l.q})):QZ[i].q,k=0,s=0,nm=i<0?"All 30":QZ[i].n;
+ function show(){var q=qs[k],h=top(nm+" · "+(k+1)+"/"+qs.length)+'<div class="bar"><i style="width:'+(k/qs.length*100)+'%"></i></div><p class="qt">'+q[0]+'</p>';
+  for(var j=0;j<4;j++)h+='<button class="opt" data-j="'+j+'">'+"ABCD"[j]+") "+q[j+1]+'</button>';
+  app.innerHTML=h;document.getElementById("bk").onclick=quizMenu;
+  app.querySelectorAll(".opt").forEach(function(b){b.onclick=function(){var j=+b.dataset.j,all=app.querySelectorAll(".opt");all.forEach(function(x){x.disabled=true});all[q[5]].classList.add("ok");
+   if(j==q[5])s++;else b.classList.add("bad");var n=document.createElement("button");n.className="sm pri";n.textContent=k+1<qs.length?"Next question":"See result";
+   n.onclick=function(){k++;k<qs.length?show():end()};var r=document.createElement("div");r.className="row";r.appendChild(n);app.appendChild(r);n.focus()}})}
+ function end(){var key=i<0?"qa":"q"+i;if(ST[key]==null||s>ST[key]){ST[key]=s;try{localStorage.setItem("biost",JSON.stringify(ST))}catch(e){}}
+  app.innerHTML='<h1 style="font-size:34px">'+nm+'</h1><div class="score">'+s+'/'+qs.length+'</div><p class="msg">'+(s==qs.length?"Perfect! Excellent work!":s>=qs.length*.7?"Great job!":"Good try. Play again!")+'</p><div class="row"><button class="sm pri" id="r">Play again</button><button class="sm" id="m">Quiz menu</button></div>';
+  document.getElementById("r").onclick=function(){quiz(i)};document.getElementById("m").onclick=quizMenu}
+ show()}
+home();
+</script></body></html>
